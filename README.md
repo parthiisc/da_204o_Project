@@ -1,43 +1,78 @@
 # DA_204o_Project
-Final Project for DA 204o : Data Science in Practice
+
+Final project: soil moisture preprocessing, EDA, feature engineering and modeling.
 
 ## Overview
-This repository contains notebooks and scripts to process soil moisture CSVs (2018 & 2020), extract date features, and produce a merged dataset used for EDA and modeling.
 
-## Quick Setup
-1. Create and activate a Python virtual environment (recommended):
+This repository contains Jupyter notebooks and helper code to preprocess per-state soil-moisture CSV files (2018 & 2020), extract date and seasonal features, run exploratory data analysis, create ML-ready datasets, and train / compare models.
+
+Key capabilities:
+- Per-file preprocessing: normalize columns, parse date columns, add `Year` / `Month` / `Day`.
+- Merge per-year CSVs and produce `merged_final.csv` for EDA and modeling.
+- Notebooks for EDA, feature engineering and model training (including optional XGBoost / LightGBM).
+
+## Prerequisites
+
+- Python 3.9+ (recommended)
+- A virtual environment (recommended)
+
+Dependencies are listed in `requirements.txt`.
+
+## Quick install
 
 ```bash
+# create virtualenv (macOS / Linux)
 python3 -m venv .venv
 source .venv/bin/activate
-```
 
-2. Install Python dependencies:
-
-```bash
+# install dependencies
 pip install -r requirements.txt
 ```
 
-## Notebooks
-- `merge.ipynb` — scans `Soil_data/2018` and `Soil_data/2020`, preprocesses each CSV (normalizes columns, robustly parses `Date` into `Date_parsed`, adds `Year`/`Month`/`Day`, converts numeric-like columns), then writes per-year final CSVs and combined `merged_final.csv`.
-- `eda.ipynb` — exploratory analysis using the merged dataset, includes season mapping by state.
+If you run into install issues for `xgboost` or `lightgbm`, those are optional for the modeling notebooks and can be omitted.
 
-## How to run the preprocessing (recommended)
-Open a terminal, activate the virtual environment, then run the `merge.ipynb` notebook in JupyterLab or run the equivalent script cell. After processing, the outputs will be written to:
+## Notebooks (recommended order)
 
-- `merged_2018_final.csv`
-- `merged_2020_final.csv`
-- `merged_final.csv`
+- `merge.ipynb` — Preprocess raw CSV files under `Soil_data/2018` and `Soil_data/2020`. Adds `Year`, `Month`, `Day` and writes per-year merged files and a combined `merged_final.csv`.
+- `1_EDA_master.ipynb` — Master EDA (uses helpers in `utils.py`) and saves plots to `eda_outputs/`.
+- `2_Feature_Engineering.ipynb` — Creates ML-ready features and saves `soil_ml_ready.csv`.
+- `3_Modeling.ipynb` — Trains baseline models (Linear, RandomForest) and optionally XGBoost / LightGBM; saves results to `model_outputs/`.
+- `model_comparison.ipynb` — Aggregates model metrics from saved outputs for comparison.
 
-If you prefer a quick script-based check (no notebook UI), run a short Python snippet that imports `merge.ipynb` logic or use the `process_csv` function in the notebook cells directly.
+There are additional EDA notebooks (`soil_moisture_eda_P1.ipynb`, `soil_moisture_eda_P2.ipynb`, `soil_moisture_eda_P3.ipynb`) and modeling variants in the workspace.
 
-## Troubleshooting date parsing
-- The preprocessing tries multiple common formats (`YYYY/MM/DD`, `YYYY-MM-DD`, `DD/MM/YYYY`, `DD-MM-YYYY`, and common textual formats). If you still see missing `Date_parsed` entries, inspect the problematic raw `Date` strings and report examples — I can add custom parsing rules.
+## Typical workflow
 
-## Contact / Next steps
-If you'd like, I can:
-- Run the merge cell and report how many rows still have missing `Date_parsed` values and show sample problematic date strings.
-- Add a small script `scripts/check_dates.py` to summarize parsing failures automatically.
+1. Activate virtual environment and install deps (see Quick install).
+2. Run `merge.ipynb` (execute top-to-bottom) to preprocess raw CSVs and produce:
+	- `merged_soil_data_2018.csv` (per-year merged)
+	- `merged_soil_data_2020.csv`
+	- `merged_final.csv` (combined, cleaned)
+3. Run `1_EDA_master.ipynb` to inspect the merged dataset and save EDA outputs.
+4. Run `2_Feature_Engineering.ipynb` to produce `soil_ml_ready.csv`.
+5. Run `3_Modeling.ipynb` (and `modeling_with_xgb_lgb.ipynb` if desired) to train models and save metrics.
+
+## File / folder overview
+
+- `Soil_data/` — raw per-state CSVs (2018 and 2020 subfolders).
+- `merge.ipynb` — preprocessing and merging logic.
+- `utils.py` — shared helper functions used by EDA / feature engineering notebooks.
+- `requirements.txt` — Python dependencies.
+- `eda_outputs/` — default output folder for EDA plots and tables (created by notebooks).
+- `soil_ml_ready.csv` — output of feature engineering used for modeling.
+- `model_outputs/` — saved models and metrics.
+
+## Troubleshooting
+
+- Date parsing: the preprocessing in `merge.ipynb` uses `pandas.to_datetime(..., errors='coerce', dayfirst=True)` and will coerce unparseable values to `NaT`. If many `NaT` values remain, inspect a few raw date strings and consider adding specific parsing rules.
+- Encoding errors reading CSVs: notebooks use a utf-8 → latin1 fallback when reading files.
+- If a notebook complains about missing columns, run upstream notebooks in order (merge → EDA → feature engineering).
+
+## Tips / Next actions I can help with
+
+- Run the preprocessing now and report rows with unparsed dates and example problematic strings.
+- Add a small CLI script `scripts/check_dates.py` to summarize date parsing failures automatically.
+- Narrow `requirements.txt` pins to exact versions for reproducible environments (e.g., Colab vs local macOS).
 
 ---
-Generated/updated on: 2025-11-17
+Last updated: 2025-11-18
