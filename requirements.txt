@@ -1,19 +1,50 @@
-# Requirements for DA_204o_Project notebooks (merge / eda)
-# Install with: pip install -r requirements.txt
+# Requirements for DA_204o_Project (cleaned & consolidated)
+# Install with: python -m pip install -r requirements.txt
 
+# Core data + ML
 pandas>=1.5.3
 numpy>=1.24.0
-jupyterlab>=3.6.0
-ipython>=8.0.0
-ipykernel>=6.22.0
+scipy>=1.9.0
+scikit-learn>=1.2.2
+joblib>=1.2.0
+
+# Modeling / boosting
+xgboost>=1.7.5
+lightgbm>=3.3.5
+
+# Notebooks / plotting
 matplotlib>=3.6.0
 plotly>=5.15.0
 seaborn>=0.12.0
-scikit-learn>=1.2.2
+
+# Analysis / stats
 statsmodels>=0.13.5
-scipy>=1.9.0
-joblib>=1.2.0
+
+# App / UI
+streamlit>=1.20.0
+streamlit-folium>=0.11.0
+
+# Geo / mapping (optional; install only if you need maps)
+geopandas>=0.13.0
+folium>=0.14.0
+
+# LLM / API
+python-dotenv>=1.0.0
+openai>=1.0.0
+langchain>=0.0.300
+
+# Server / real-time (optional)
+fastapi>=0.95.0
+uvicorn>=0.22.0
+
+# Utilities
+ipython>=8.0.0
+ipykernel>=6.22.0
+jupyterlab>=3.6.0
 ipynbname>=0.3.0
-# Optional (install if you plan to run modeling notebooks)
-xgboost>=1.7.5
-lightgbm>=3.3.5
+pyyaml>=6.0
+
+# Notes:
+# - Some optional packages (geopandas, lightgbm, xgboost) require system dependencies
+#   and can be installed separately if you plan to use geo features or those model formats.
+# - If you install in a clean venv, run `pip install -r requirements.txt` from project root.
