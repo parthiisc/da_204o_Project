@@ -1,0 +1,28 @@
+# Configuration file for Soil Moisture Prediction Application
+
+data:
+  merged_csv: "./data/processed/merged_final.csv"
+  soil_csv: "./data/processed/soil_ml_ready.csv"
+  model_dir: "./model_outputs"
+
+features:
+  - Month_num
+  - month_sin
+  - month_cos
+  - Season_num
+  - state_freq
+  - district_id
+  - lag_1
+  - lag_7
+  - rolling_3
+  - rolling_6
+
+models:
+  preferred: ["LightGBM", "XGBoost"]
+  ensemble: true
+
+app:
+  cache_ttl: 3600  # Cache time-to-live in seconds
+  page_title: "Soil Moisture Predictor"
+  page_layout: "wide"
+
