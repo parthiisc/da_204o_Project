@@ -45,7 +45,137 @@ st.set_page_config(
     layout=config['app']['page_layout']
 )
 
-st.title("🌾 Soil Moisture Predictor")
+# Landing / Home UI (cards) — matches screenshot style
+st.markdown(
+        """
+        <div style='display:flex; align-items:center; gap:16px;'>
+            <h1 style='margin:0; padding:0;'>🏠 HOME</h1>
+            <div style='color:#9aa0a6; margin-left:8px; font-size:0.95rem;'>Agricultural Intelligence Portal</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+)
+
+st.markdown("""
+---
+""")
+
+# Quick statistics row
+st.markdown("""
+<div style='display:flex; gap:18px; margin-top:12px;'>
+    <div style='flex:1; padding:18px; background:transparent;'>
+        <h2 style='margin:0 0 8px 0;'>📊 Quick Statistics</h2>
+        <div style='display:flex; gap:20px; color:#fff;'>
+            <div style='flex:1;'>
+                <div style='font-size:1.3rem; font-weight:600;'>4</div>
+                <div style='color:#2ecc71;'>ML Models</div>
+                <div style='color:#2ecc71; font-size:0.85rem;'>XGBoost, LightGBM, RF, Linear</div>
+            </div>
+            <div style='flex:1;'>
+                <div style='font-size:1.3rem; font-weight:600;'>4</div>
+                <div style='color:#2ecc71;'>CNN Models</div>
+                <div style='color:#2ecc71; font-size:0.85rem;'>CNN & ResNet50 variants</div>
+            </div>
+            <div style='flex:1;'>
+                <div style='font-size:1.3rem; font-weight:600;'>36</div>
+                <div style='color:#2ecc71;'>States Covered</div>
+                <div style='color:#2ecc71; font-size:0.85rem;'>All major Indian states</div>
+            </div>
+            <div style='flex:1;'>
+                <div style='font-size:1.3rem; font-weight:600;'>42</div>
+                <div style='color:#2ecc71;'>Disease Classes</div>
+                <div style='color:#2ecc71; font-size:0.85rem;'>Crop disease types</div>
+            </div>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# Available Applications cards (two columns)
+col1, col2 = st.columns([1, 1])
+with col1:
+        st.markdown(
+                """
+                <div style='border:2px solid #2ecc71; border-radius:8px; padding:18px; background:#ffffff; color:#0b3d0b;'>
+                    <h2 style='margin-top:0;'>🌿 Soil Moisture Prediction</h2>
+                    <ul style='margin-top:0.25rem;'>
+                        <li>Predict soil moisture levels using ML models (XGBoost, LightGBM)</li>
+                        <li>District-level rankings and comparisons</li>
+                        <li>3-month forward projections</li>
+                        <li>State-aware crop recommendations</li>
+                        <li>Interactive visualizations and heatmaps</li>
+                        <li>Historical data analysis</li>
+                    </ul>
+                    <p style='color:#666; font-size:0.9rem;'>Use the navigation sidebar to access this application.</p>
+                </div>
+                """,
+                unsafe_allow_html=True,
+        )
+with col2:
+        st.markdown(
+                """
+                <div style='border:2px solid #2b7cff; border-radius:8px; padding:18px; background:#ffffff; color:#0b2f66;'>
+                    <h2 style='margin-top:0;'>🖼️ CNN Image Classification</h2>
+                    <ul style='margin-top:0.25rem;'>
+                        <li>Crop disease classification (CNN/ResNet50)</li>
+                        <li>Soil moisture classification from images</li>
+                        <li>Sample image gallery and confidence scoring</li>
+                        <li>Support for multiple model architectures</li>
+                    </ul>
+                    <p style='color:#666; font-size:0.9rem;'>Use the navigation sidebar to access this application.</p>
+                </div>
+                """,
+                unsafe_allow_html=True,
+        )
+
+st.markdown("""
+---
+""")
+
+# Landing navigation controls: keep landing clean and hide main sidebar/app until user chooses
+if 'show_main_app' not in st.session_state:
+    st.session_state['show_main_app'] = False
+
+st.markdown("#### How to use this portal")
+st.markdown(
+    "- Use the left sidebar pages to open **Soil Moisture Prediction** or **CNN Image Classification**.\n"
+    "- Or click **Open Soil Moisture Predictor (inline)** to run the predictor on this page.\n"
+    "- For CNN Image Classification, click the **CNN Image Classification** page in the left sidebar (recommended)."
+)
+
+col_a, col_b = st.columns([1, 1])
+with col_a:
+    if st.button("Open Soil Moisture Predictor (inline)"):
+        st.session_state['show_main_app'] = True
+with col_b:
+    if st.button("Open CNN Image Classification (sidebar page)"):
+        st.info("Open the 'CNN Image Classification' entry in the left sidebar to use the CNN image tools.")
+
+st.markdown("""
+#### 🚀 Getting Started
+<div style='background:#17374b; padding:18px; border-radius:8px; color:#ffffff;'>
+    <ol style='margin:0 0 0 16px;'>
+        <li><strong>Soil Moisture Prediction:</strong> Navigate to "🌾 Soil Moisture Prediction" in the sidebar
+            <ul>
+                <li>Select a state and district</li>
+                <li>Choose a prediction date</li>
+                <li>Click "Predict & Analyze" to get predictions and insights</li>
+            </ul>
+        </li>
+        <li style='margin-top:8px;'><strong>CNN Image Classification:</strong> Navigate to "🖼️ CNN Image Classification" in the sidebar
+            <ul>
+                <li>Upload an image for crop disease or soil moisture classification</li>
+                <li>Select your preferred model (CNN or ResNet50)</li>
+                <li>View predictions with confidence scores</li>
+            </ul>
+        </li>
+    </ol>
+</div>
+""", unsafe_allow_html=True)
+
+# If user hasn't chosen to open the main app, stop here to keep landing minimal
+if not st.session_state['show_main_app']:
+        st.stop()
 
 # Initialize components
 data_loader = DataLoader(root_dir=".")

@@ -26,9 +26,14 @@ if parent_dir not in sys.path:
 if streamlit_app_dir not in sys.path:
     sys.path.insert(0, streamlit_app_dir)
 
-# Add Final_Project to path
+# Prefer using the `CNN/` folder (do not move or create folders)
+cnn_dir = os.path.join(parent_dir, "CNN")
+if cnn_dir not in sys.path:
+    sys.path.insert(0, cnn_dir)
+
+# For backward compatibility, also add Final_Project if it exists
 final_project_dir = os.path.join(parent_dir, "Final_Project")
-if final_project_dir not in sys.path:
+if os.path.isdir(final_project_dir) and final_project_dir not in sys.path:
     sys.path.insert(0, final_project_dir)
 
 # Import with error handling to avoid segfault
@@ -46,7 +51,7 @@ try:
     predict_soil_image = Soil_Classification.predict_image
 except ImportError as e:
     st.error(f"❌ Error importing CNN modules: {str(e)}")
-    st.info("Please ensure Final_Project folder contains Disease_classification.py and Soil_Classification.py")
+    st.info("Please ensure the `CNN/` folder contains `Disease_classification.py` and `Soil_Classification.py` (or add `Final_Project/` with these files).")
     st.stop()
 except Exception as e:
     st.warning(f"⚠️ Warning during import: {str(e)}")
@@ -88,15 +93,19 @@ disease_labels = [
 # Moisture labels
 moisture_labels = ['0-10', '11-20', '21-40', '41-100']
 
-# Model paths (relative to Final_Project)
-final_project_path = Path(parent_dir) / "Final_Project"
-cnn_soil_path = final_project_path / "cnn_soil_best.pth"
-resnet_soil_path = final_project_path / "resnet50_soil_best.pth"
-cnn_plant_path = final_project_path / "CNN_Plant_best.pth"
-resnet_plant_path = final_project_path / "ResNet_Plant_best.pth"
+# Model paths (prefer `CNN/` folder)
+cnn_path = Path(parent_dir) / "CNN"
+cnn_soil_path = cnn_path / "cnn_soil_best.pth"
+resnet_soil_path = cnn_path / "resnet50_soil_best.pth"
+cnn_plant_path = cnn_path / "CNN_Plant_best.pth"
+resnet_plant_path = cnn_path / "ResNet_Plant_best.pth"
 
-# Dataset paths
-dataset_root = final_project_path / "CropDiseaseImages" / "Validation"
+# Dataset paths (if dataset is in a different folder, keep previous Final_Project as fallback)
+dataset_root = Path(parent_dir) / "Final_Project" / "CropDiseaseImages" / "Validation"
+if (Path(parent_dir) / "CropDiseaseImages" / "Validation").exists():
+    dataset_root = Path(parent_dir) / "CropDiseaseImages" / "Validation"
+elif (cnn_path / "CropDiseaseImages" / "Validation").exists():
+    dataset_root = cnn_path / "CropDiseaseImages" / "Validation"
 
 # Tabs for Disease & Soil Moisture
 tab1, tab2 = st.tabs(["🌾 Crop Disease Classification", "💧 Soil Moisture Classification"])

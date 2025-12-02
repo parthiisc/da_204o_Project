@@ -94,20 +94,54 @@ class ImprovedCNN(nn.Module):
 # ============================================================
 #                LOAD MODELS
 # ============================================================
-cnn_weights_path = "CNN_Plant_best.pth"
-resnet_weights_path = "ResNet_Plant_best.pth"
+module_dir = Path(__file__).parent
 
-# CNN
-cnn_model = ImprovedCNN(num_classes).to(device)
-cnn_model.load_state_dict(torch.load(cnn_weights_path, map_location=device))
-cnn_model.eval()
+# Resolve weight file paths relative to this module's location (CNN/)
+cnn_weights_path = module_dir / "CNN_Plant_best.pth"
+resnet_weights_path = module_dir / "ResNet_Plant_best.pth"
 
-# ResNet50
-resnet_model = models.resnet50(weights=None)
-resnet_model.fc = nn.Linear(resnet_model.fc.in_features, num_classes)
-resnet_model.load_state_dict(torch.load(resnet_weights_path, map_location=device))
-resnet_model.to(device)
-resnet_model.eval()
+# Models will be loaded lazily on first prediction to avoid import-time failures
+cnn_model = None
+resnet_model = None
+
+def _load_models_if_needed():
+    """Load CNN and ResNet weights into globals if they are not already loaded.
+    This is safe to call multiple times and will silently continue if weights
+    are missing — prediction functions will raise a clear error instead.
+    """
+    global cnn_model, resnet_model
+    # Load CNN
+    if cnn_model is None:
+        try:
+            m = ImprovedCNN(num_classes).to(device)
+            state = torch.load(str(cnn_weights_path), map_location=device)
+            # Allow checkpoints that store either state_dict or the raw dict
+            if isinstance(state, dict) and "model_state_dict" in state:
+                m.load_state_dict(state["model_state_dict"])
+            else:
+                m.load_state_dict(state)
+            m.eval()
+            cnn_model = m
+        except Exception as e:
+            print(f"Warning: failed to load CNN weights from {cnn_weights_path}: {e}")
+            cnn_model = None
+
+    # Load ResNet
+    if resnet_model is None:
+        try:
+            r = models.resnet50(weights=None)
+            r.fc = nn.Linear(r.fc.in_features, num_classes)
+            state = torch.load(str(resnet_weights_path), map_location=device)
+            if isinstance(state, dict) and "model_state_dict" in state:
+                r.load_state_dict(state["model_state_dict"])
+            else:
+                r.load_state_dict(state)
+            r.to(device)
+            r.eval()
+            resnet_model = r
+        except Exception as e:
+            print(f"Warning: failed to load ResNet weights from {resnet_weights_path}: {e}")
+            resnet_model = None
 
 # ============================================================
 #                SHOW SAMPLE IMAGES
@@ -140,10 +174,17 @@ def predict_image(model_type, img_file):
     Predict disease class using CNN or ResNet on a single uploaded image.
     Returns predicted class, confidence %, PIL image.
     """
+    # Ensure models are loaded (lazy load)
+    _load_models_if_needed()
+
     img = Image.open(img_file).convert("RGB")
     img_tensor = transform(img).unsqueeze(0).to(device)
 
     model = cnn_model if model_type.lower() == "cnn" else resnet_model
+
+    if model is None:
+        raise RuntimeError(f"Requested model ('{model_type}') is not available because weights were not found.\n"
+                           f"Expected files: {cnn_weights_path} and/or {resnet_weights_path} in the `CNN/` folder.")
 
     with torch.no_grad():
         output = model(img_tensor)

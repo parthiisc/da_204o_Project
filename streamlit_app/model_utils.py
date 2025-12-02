@@ -42,8 +42,9 @@ class ModelManager:
         for model_file in model_files:
             model_path = os.path.join(self.model_dir, model_file)
             model_name = self._identify_model(model_file)
-            
-            if model_name:
+
+            # Only load XGBoost and LightGBM models
+            if model_name in ("XGBoost", "LightGBM"):
                 try:
                     self.models[model_name] = joblib.load(model_path)
                     logger.info(f"Successfully loaded {model_name} from {model_file}")
@@ -52,6 +53,8 @@ class ModelManager:
                 except Exception as e:
                     logger.error(f"Error loading model {model_file}: {str(e)}")
                     st.warning(f"⚠️ Could not load {model_file}: {str(e)}")
+            else:
+                logger.info(f"Skipping non-XGBoost/LightGBM model file: {model_file}")
     
     def _identify_model(self, filename: str) -> Optional[str]:
         """
@@ -66,12 +69,8 @@ class ModelManager:
         filename_lower = filename.lower()
         if "light" in filename_lower or "lgbm" in filename_lower:
             return "LightGBM"
-        elif "xgb" in filename_lower or "xgboost" in filename_lower:
+        if "xgb" in filename_lower or "xgboost" in filename_lower:
             return "XGBoost"
-        elif "random" in filename_lower or "rf" in filename_lower:
-            return "RandomForest"
-        elif "linear" in filename_lower or "lr" in filename_lower:
-            return "Linear"
         return None
     
     def predict(self, features, model_name: Optional[str] = None) -> Optional[float]:
