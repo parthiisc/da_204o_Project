@@ -4,8 +4,8 @@
 
 **Note:** Team member details:
 - **Parth, Patel** - parthpatel@iisc.ac.in
-- **Payal Dey** - Roll Number 2 - Email 2
-- **Inderjit Singh Chauhan** - Roll Number 3 - Email 3
+- **Payal Dey** - payaldey@iisc.ac.in
+- **Inderjit Singh Chauhan** -  inderjits@iisc.ac.in
 
 ---
 
@@ -69,91 +69,81 @@ The project uses soil moisture data from multiple sources:
 ## High-Level Approach and Methods
 
 ### 1. Data Collection and Preprocessing
-- **Notebook:** `0_merge.ipynb`
-- Merged state-wise CSV files into a unified dataset
-- Standardized column names and data formats
-- Handled missing values and data inconsistencies
+## File Size Notes & Model Hosting
 
-### 2. Exploratory Data Analysis (EDA)
-- **Notebook:** `1_EDA_master.ipynb`
-- Analyzed distributions, correlations, and temporal patterns
-- Identified seasonal variations and state-wise differences
-- Generated visualizations for key insights
-- Outputs stored in `eda_outputs/` folder
+Some data and model files are large. Recommended approaches:
 
-### 3. Feature Engineering
-- **Notebook:** `2_Feature_Engineering.ipynb`
-- Created cyclic encoding for months (sin/cos transformations)
-- Generated lag features (1-day, 7-day) for temporal dependencies
-- Computed rolling statistics (3-day, 6-day means)
-- Encoded categorical variables (state, district)
-- Produced ML-ready dataset: `soil_ml_ready.csv`
+- Keep large binary model files out of git history when possible. Use Git LFS for smaller teams and quota-friendly usage.
+- Prefer hosting model artifacts externally (GitHub Releases, S3, GDrive) and let the app download them at runtime. This repo already includes a manifest (`models_manifest.json`) and a downloader helper located at `streamlit_app/model_downloader.py`.
 
-### 4. Modeling
-- **Notebook:** `3_Modeling.ipynb`
-- **Models Used:**
-  - Linear Regression (baseline)
-  - Random Forest
-  - XGBoost
-  - LightGBM
-- **Evaluation Strategy:**
-  - Temporal split: 2018 (train) / 2020 (test)
-  - Metrics: RMSE, MAE, R²
-  - Cross-validation for hyperparameter tuning
-- **Preprocessing:**
-  - Median imputation for missing values
-  - StandardScaler for feature normalization
-- **Model Persistence:** Trained models saved in `model_outputs/` as `.joblib` files
+How the app handles models (current setup)
 
-### 5. Application Development
-- **Technology:** Streamlit web framework
-- **Location:** `streamlit_app/` package
-- **Features:**
-  - Interactive state/district selection
-  - Real-time predictions with XGBoost and LightGBM
-  - District rankings within states
-  - 3-month forward projections
-  - State-aware crop recommendations
-  - Interactive visualizations (heatmaps, time series plots)
-  - Downloadable reports (CSV, PNG)
+- `models_manifest.json` maps model filenames to direct-download URLs (we use a GitHub Release `v1.0-models` in this repo).
+- At runtime the app will attempt to load models from `model_outputs/` and `CNN/`. If models are missing, the downloader will fetch them from the manifest URLs.
+- A helper script is provided: `scripts/download_models.py` (run with `PYTHONPATH=. python scripts/download_models.py`) to pre-download models into the correct folders locally.
 
-### 6. Model Architecture
+This avoids committing large `.pth` or `.joblib` artifacts directly to the repository while still allowing the app to fetch them automatically.
+
+## Requirements (recommended additions)
+
+Make sure `requirements.txt` contains the runtime packages required by the app. At minimum we recommend adding:
 
 ```
-Input Features (10 features)
-    ↓
-[Preprocessing: Imputation + Scaling]
-    ↓
-[Model Ensemble: XGBoost + LightGBM]
-    ↓
-[Average Prediction]
-    ↓
-Output: Soil Moisture Prediction + Analysis
+streamlit
+requests
+joblib
+xgboost
+lightgbm
+torch
+torchvision
 ```
+
+Install locally with:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Quick Run (local)
+
+From the repository root you can run the app with the convenience wrapper we added:
+
+```bash
+streamlit run streamlit_app/Home.py
+```
+
+
+
+## License
+
+See `LICENSE` file for details.
 
 ---
 
-## Summary of Results
+## Contributing
 
-### Model Performance
+This is a course project. For questions or issues, please contact the team members listed above.
 
-| Model | RMSE | MAE | R² |
-|-------|------|-----|-----|
-| Linear | 0.31022379542851086 | 0.2016841945515501 | 0.9391168752575136 |
-| RandomForest | 0.3086963247906589 | 0.10479301476644069 | 0.9397149482510946 |
-| XGBoost | 0.2995659428241338 | 0.11070270889175829 | 0.9432283397265419 |
-| LightGBM | 0.3056863462119652 | 0.11184957519541998 | 0.9408848491713584 |
+---
 
+## References
 
-*Note: Update with actual performance metrics from your model evaluation*
+- [Streamlit Documentation](https://docs.streamlit.io/)
+- [XGBoost Documentation](https://xgboost.readthedocs.io/)
+- [LightGBM Documentation](https://lightgbm.readthedocs.io/)
+- [Scikit-learn Documentation](https://scikit-learn.org/)
 
-### Key Insights
+---
 
-1. **Temporal Patterns:** Strong seasonal variations observed, with peak moisture during monsoon months (June-September)
-2. **Geographic Variations:** Significant differences across states, with coastal regions showing higher average moisture
-3. **Model Performance:** Ensemble approach (XGBoost + LightGBM) provides best balance of accuracy and robustness
-4. **Feature Importance:** Temporal features (month, season) and lag features are most predictive
+## Acknowledgments
 
+- Data sources: [Specify your data sources]
+- Libraries and tools: pandas, numpy, scikit-learn, xgboost, lightgbm, streamlit, plotly
+- Course: DA_204o - Data Analytics
+
+---
+
+**Last Updated:** 2025-12-02
 ### Application Features
 
 **Predictions:** Real-time soil moisture predictions for any state-district combination  
@@ -167,51 +157,44 @@ Output: Soil Moisture Prediction + Analysis
 
 ## Repository Structure
 
-```
-DA_204o_Project/
-├── README.md                          # This file
-├── LICENSE                            # License file
-├── requirements.txt                   # Python dependencies
-├── config.yaml                        # Application configuration
-│
-├── data/                              # Data files
-│   ├── raw/                          # Original data files
-│   │   ├── 2018/                    # 2018 state-wise CSVs
-│   │   └── 2020/                     # 2020 state-wise CSVs
-│   ├── processed/                    # Processed datasets
-│   │   ├── merged_final.csv          # Merged dataset
-│   │   └── soil_ml_ready.csv        # ML-ready dataset
-│   └── Soil_data/                    # Additional soil data
-│
-├── code/                              # Code and notebooks
-│   ├── 0_merge.ipynb                 # Data merging
-│   ├── 1_EDA_master.ipynb            # Exploratory Data Analysis
-│   ├── 2_Feature_Engineering.ipynb  # Feature engineering
-│   ├── 3_Modeling.ipynb              # Model training
-│   ├── model_comparison.ipynb        # Model comparison
-│   ├── retrain_pipeline.py           # Retraining script
-│   └── utils.py                      # Utility functions
-│
-├── streamlit_app/                     # Streamlit application
-│   ├── app.py                        # Main application
-│   ├── config_loader.py              # Configuration loader
-│   ├── data_loader.py                # Data loading module
-│   ├── model_utils.py                # Model management
-│   ├── feature_engineering.py        # Feature building
-│   └── recommendations.py            # Crop recommendations
-│
-├── model_outputs/                     # Trained models
-│   ├── LightGBM_reg.joblib
-│   ├── XGBoost_reg.joblib
-│   ├── RandomForest_reg.joblib
-│   └── Linear_reg.joblib
-│
-├── eda_outputs/                       # EDA visualizations
-│   ├── correlation_matrix.png
-│   ├── monthly_by_year.png
-│   └── ...
+Top-level layout (important files and folders):
 
 ```
+DA_204o_Project/
+├── .devcontainer/                # VS Code devcontainer (optional)
+├── .dist/                        # build/dist artifacts (optional)
+├── .env                          # local env overrides (not committed)
+├── .gitattributes                # Git LFS / attributes
+├── .gitignore
+├── .venv/                        # local virtual environment (not committed)
+├── CNN/                          # CNN model code & weights (pytorch .pth files)
+├── CNN_model/                    # additional CNN artifacts (if present)
+├── Course project proposal.pdf
+├── Final_Academic_Presentation_v3.pptx
+├── LICENSE
+├── README.md
+├── config.yaml                   # Application configuration
+├── data/                         # Raw and processed datasets
+├── model_outputs/                # Trained model artifacts (joblib)
+├── models_manifest.json          # Manifest mapping model filenames -> download URLs
+├── requirements.txt
+├── scripts/                      # Utility scripts (download, maintenance)
+├── streamlit_app/                # Streamlit application package
+│   ├── Home.py                   # App landing page (module)
+│   ├── app.py                    # older app entry (kept for reference)
+│   ├── model_utils.py            # model loading & predictions
+│   ├── model_downloader.py       # helper to fetch models from manifest
+│   ├── pages/                    # Streamlit multipage components
+│   └── ...
+├── streamlit_app.py              # legacy / alternative entry (optional)
+└── scripts/download_models.py    # convenience script to pre-download models
+
+```
+
+Notes:
+- Keep large binaries (models) outside of git history when possible; use Releases or S3 and the provided `models_manifest.json`.
+- The app expects model files under `model_outputs/` (regression `.joblib`) and `CNN/` (`.pth` weights). Use `scripts/download_models.py` to populate these folders locally before running the app if desired.
+
 
 ---
 
