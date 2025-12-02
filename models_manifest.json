@@ -1,0 +1,6 @@
+{
+  "LightGBM_reg.joblib": "https://github.com/parthiisc/DA_204o_Project/releases/download/v1.0-models/LightGBM_reg.joblib",
+  "XGBoost_reg.joblib": "https://github.com/parthiisc/DA_204o_Project/releases/download/v1.0-models/XGBoost_reg.joblib",
+  "cnn_soil_best.pth": "https://github.com/parthiisc/DA_204o_Project/releases/download/v1.0-models/cnn_soil_best.pth",
+  "resnet50_soil_best.pth": "https://github.com/parthiisc/DA_204o_Project/releases/download/v1.0-models/resnet50_soil_best.pth"
+}

@@ -7,6 +7,13 @@ import logging
 from typing import Optional, Dict, Any
 import joblib
 import streamlit as st
+from pathlib import Path
+
+# Try to import downloader (optional). If manifest isn't present this is a noop.
+try:
+    from streamlit_app import model_downloader as _model_downloader
+except Exception:
+    _model_downloader = None
 
 logger = logging.getLogger(__name__)
 
@@ -31,8 +38,14 @@ class ModelManager:
             logger.warning(f"Model directory not found: {self.model_dir}")
             st.warning(f"⚠️ Model directory not found: {self.model_dir}")
             return
-        
+        # If directory exists but is empty, attempt to download files from a manifest
         model_files = [f for f in os.listdir(self.model_dir) if f.endswith(".joblib")]
+        if not model_files and _model_downloader is not None:
+            try:
+                _model_downloader.try_download_all(self.model_dir)
+                model_files = [f for f in os.listdir(self.model_dir) if f.endswith(".joblib")]
+            except Exception as e:
+                logger.warning("Downloader attempt failed: %s", e)
         
         if not model_files:
             logger.warning(f"No model files found in {self.model_dir}")

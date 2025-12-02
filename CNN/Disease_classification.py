@@ -7,6 +7,7 @@ from torchvision import transforms, models, datasets
 from PIL import Image, ImageFile
 import random
 from pathlib import Path
+from pathlib import Path as _Path
 
 # Fix corrupted images
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -113,6 +114,15 @@ def _load_models_if_needed():
     # Load CNN
     if cnn_model is None:
         try:
+            # Attempt to download weights if a downloader is available and files are missing
+            try:
+                from streamlit_app import model_downloader as _md
+            except Exception:
+                _md = None
+
+            if _md is not None and not cnn_weights_path.exists():
+                _md.download_file(cnn_weights_path.name, str(cnn_weights_path))
+
             m = ImprovedCNN(num_classes).to(device)
             state = torch.load(str(cnn_weights_path), map_location=device)
             # Allow checkpoints that store either state_dict or the raw dict
@@ -129,6 +139,14 @@ def _load_models_if_needed():
     # Load ResNet
     if resnet_model is None:
         try:
+            try:
+                from streamlit_app import model_downloader as _md
+            except Exception:
+                _md = None
+
+            if _md is not None and not resnet_weights_path.exists():
+                _md.download_file(resnet_weights_path.name, str(resnet_weights_path))
+
             r = models.resnet50(weights=None)
             r.fc = nn.Linear(r.fc.in_features, num_classes)
             state = torch.load(str(resnet_weights_path), map_location=device)
