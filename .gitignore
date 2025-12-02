@@ -1,0 +1,10 @@
+# Ignore CNN subfolders that should not be pushed
+/CNN/Soil_Moisture/
+/CNN/CropDiseaseImages/
+
+# Common ignores
+__pycache__/
+*.pyc
+.DS_Store
+.env
+venv/
