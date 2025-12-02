@@ -1,0 +1,4 @@
+*.joblib filter=lfs diff=lfs merge=lfs -text
+*.pth filter=lfs diff=lfs merge=lfs -text
+model_outputs/*.joblib filter=lfs diff=lfs merge=lfs -text
+model_outputs/*.pth filter=lfs diff=lfs merge=lfs -text
