@@ -168,7 +168,7 @@ DA_204o_Project/
 ├── .gitignore
 ├── .venv/                        # local virtual environment (not committed)
 ├── CNN/                          # CNN model Inference for Streamlit App (pytorch .pth files)
-├── CNN_model/                    # CNN Trained models (if present)
+├── CNN_model/                    # CNN Trained models (along with Accuracy and Prediction scores)
 ├── Course project proposal.pdf
 ├── Final_Academic_Presentation_v3.pptx
 ├── LICENSE
