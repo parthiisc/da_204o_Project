@@ -3,7 +3,7 @@
 ## Team Members
 
 **Note:** Team member details:
-- **Parth, Patel** - Roll Number 1 - Email 1
+- **Parth, Patel** - parthpatel@iisc.ac.in
 - **Payal Dey** - Roll Number 2 - Email 2
 - **Inderjit Singh Chauhan** - Roll Number 3 - Email 3
 
@@ -46,6 +46,7 @@ The project uses soil moisture data from multiple sources:
    - **Size:** ~287,288 rows × 25 columns
    - Preprocessed dataset with engineered features
    - Includes: temporal features, lag features, rolling statistics, and encoded variables
+
 
 ### Key Variables
 
@@ -245,7 +246,7 @@ DA_204o_Project/
    ls model_outputs/*.joblib
    ```
 
-4. **Run the application:**
+4. **Run the application from DA_204o_Project folder:**
    ```bash
    streamlit run streamlit_app/app.py
    ```
@@ -287,6 +288,52 @@ Some data files may exceed 100 MB. For large files:
 - Use Git LFS (Git Large File Storage) if available
 - Or provide download links in this README
 - Contact repository maintainers for data access
+
+## Git LFS — Managing Large Models
+
+If your project contains large model files (for example `.pth` or `.joblib`), Git LFS (Large File Storage) is recommended. Below are concise instructions and best practices you can follow.
+
+- **Install Git LFS**
+   ```bash
+   # macOS (Homebrew)
+   brew install git-lfs
+   git lfs install
+
+   # or Debian/Ubuntu
+   curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+   sudo apt-get install git-lfs
+   git lfs install
+   ```
+
+- **Track files**
+   ```bash
+   # Track model patterns used in this repo
+   git lfs track "model_outputs/*.joblib"
+   git lfs track "CNN/*.pth"
+   git add .gitattributes
+   git commit -m "Track model artifacts with Git LFS"
+   ```
+
+- **Push and pull LFS objects**
+   - After committing LFS-tracked files, push as usual: `git push origin main` (Git LFS will upload the large objects automatically).
+   - To fetch LFS objects after cloning: `git lfs pull` (or `git lfs fetch && git lfs checkout`).
+
+- **Migrate existing history to LFS (advanced)**
+   - If you already committed large binaries and want to move them to LFS, you can rewrite history with `git lfs migrate import`.
+   - **WARNING:** this rewrites commits and requires a force-push to update the remote. Create a backup branch first:
+      ```bash
+      git branch backup-before-lfs
+      git lfs migrate import --include="model_outputs/*.joblib,CNN/*.pth" --include-ref=refs/heads/main --yes
+      git push origin main --force
+      ```
+   - Use migration only when necessary and when you understand the impact on collaborators and CI systems.
+
+- **GitHub LFS limits & alternatives**
+   - GitHub repositories using LFS must respect storage and bandwidth quotas. If you hit limits or want a simpler approach, host model archives externally (GitHub Releases, S3, or other) and set `STREAMLIT_MODEL_URL` (or update `config.yaml`) so the app downloads models at startup.
+
+- **Troubleshooting**
+   - If `git push` fails after migrating, check remote quotas or try pushing via SSH. You can also upload model artifacts to a Release and use a URL.
+   - If collaborators cannot access LFS files after cloning, ensure they run `git lfs install` and `git lfs pull`.
 
 ---
 
