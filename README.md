@@ -167,8 +167,8 @@ DA_204o_Project/
 ├── .gitattributes                # Git LFS / attributes
 ├── .gitignore
 ├── .venv/                        # local virtual environment (not committed)
-├── CNN/                          # CNN model code & weights (pytorch .pth files)
-├── CNN_model/                    # additional CNN artifacts (if present)
+├── CNN/                          # CNN model Inference for Streamlit App (pytorch .pth files)
+├── CNN_model/                    # CNN Trained models (if present)
 ├── Course project proposal.pdf
 ├── Final_Academic_Presentation_v3.pptx
 ├── LICENSE
