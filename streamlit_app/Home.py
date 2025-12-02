@@ -49,8 +49,8 @@ st.set_page_config(
 st.markdown(
         """
         <div style='display:flex; align-items:center; gap:16px;'>
-            <h1 style='margin:0; padding:0;'>🏠 HOME</h1>
-            <div style='color:#9aa0a6; margin-left:8px; font-size:0.95rem;'>Agricultural Intelligence Portal</div>
+            <h1 style='margin:0; padding:0;'>🏠 Agricultural Intelligence Portal</h1>
+            <div style='color:#9aa0a6; margin-left:8px; font-size:0.95rem;'></div>
         </div>
         """,
         unsafe_allow_html=True,

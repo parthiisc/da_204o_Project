@@ -243,7 +243,7 @@ DA_204o_Project/
 
 4. **Run the application from DA_204o_Project folder:**
    ```bash
-   streamlit run streamlit_app/app.py
+   streamlit run streamlit_app/Home.py
    ```
 
 
