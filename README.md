@@ -139,11 +139,11 @@ Output: Soil Moisture Prediction + Analysis
 
 | Model | RMSE | MAE | R² |
 |-------|------|-----|-----|
-| Linear Regression | [Value] | [Value] | [Value] |
-| Random Forest | [Value] | [Value] | [Value] |
-| XGBoost | [Value] | [Value] | [Value] |
-| LightGBM | [Value] | [Value] | [Value] |
-| Ensemble (XGBoost + LightGBM) | [Value] | [Value] | [Value] |
+| Linear | 0.31022379542851086 | 0.2016841945515501 | 0.9391168752575136 |
+| RandomForest | 0.3086963247906589 | 0.10479301476644069 | 0.9397149482510946 |
+| XGBoost | 0.2995659428241338 | 0.11070270889175829 | 0.9432283397265419 |
+| LightGBM | 0.3056863462119652 | 0.11184957519541998 | 0.9408848491713584 |
+
 
 *Note: Update with actual performance metrics from your model evaluation*
 
@@ -210,12 +210,7 @@ DA_204o_Project/
 │   ├── correlation_matrix.png
 │   ├── monthly_by_year.png
 │   └── ...
-│
-└── docs/                              # Documentation
-    ├── QUICK_START.md
-    ├── SETUP_AND_RUN_GUIDE.md
-    ├── IMPLEMENTATION_SUMMARY.md
-    └── CODE_REVIEW_AND_IMPROVEMENTS.md
+
 ```
 
 ---
@@ -251,15 +246,6 @@ DA_204o_Project/
    streamlit run streamlit_app/app.py
    ```
 
-The application will open in your browser at `http://localhost:8501`
-
-### Quick Start
-
-For detailed setup instructions, see:
-- `QUICK_START.md` - Quick reference guide
-- `SETUP_AND_RUN_GUIDE.md` - Comprehensive setup guide
-
----
 
 ## Usage
 
