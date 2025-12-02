@@ -4,8 +4,8 @@
 
 **Note:** Team member details:
 - **Parth, Patel** - parthpatel@iisc.ac.in
-- **Payal Dey** - Roll Number 2 - Email 2
-- **Inderjit Singh Chauhan** - Roll Number 3 - Email 3
+- **Payal Dey** - Roll Number 13-19-01-19-52-23-1-23591 - Email payaldey@iisc.ac.in
+- **Inderjit Singh Chauhan** - Roll Number 3 - Email inderjits@iisc.ac.in
 
 ---
 
